@@ -5,7 +5,7 @@ namespace ExampleApplication.Application.Helpers.Database
 {
     public class TestDatabaseHelper : BaseDatabaseHelper
     {
-        private static readonly string _ConnectionString = "data source=DESKTOP-FD5NGCT;initial catalog=Finances;trusted_connection=true; TrustServerCertificate=True;";
+        private static readonly string _ConnectionString = "data source=;initial catalog=Finances;trusted_connection=true; TrustServerCertificate=True;";
 
         public static TestDatabaseModel GetTestQuery()
         {
