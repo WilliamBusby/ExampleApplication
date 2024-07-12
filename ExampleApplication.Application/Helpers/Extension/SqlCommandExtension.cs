@@ -14,7 +14,7 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <param name="command">SqlCommand to add parameters to.</param>
         /// <param name="parameters">SQL parameters.</param>
         /// <returns>SqlParameters added to the command.</returns>
-        public static List<SqlParameter> AddParameters(this SqlCommand command, Dictionary<string, object?> parameters)
+        public static List<SqlParameter> AddParameters(this SqlCommand command, IDictionary<string, object?> parameters)
         {
             List<SqlParameter> output = new();
 

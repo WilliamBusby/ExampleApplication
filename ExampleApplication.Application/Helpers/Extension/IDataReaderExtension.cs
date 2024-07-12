@@ -1,15 +1,16 @@
-﻿using ExampleApplication.Application.Models.Interface;
+﻿using ExampleApplication.Application.Models.Exceptions;
+using ExampleApplication.Application.Models.Interface;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using SqlException = ExampleApplication.Application.Models.Exceptions.SqlException;
+using System.Data;
 
 namespace ExampleApplication.Application.Helpers.Extension
 {
     /// <summary>
-    /// Extension methods for <seealso cref="SqlDataReader"/>.
+    /// Extension methods for <seealso cref="IDataReader"/>.
     /// </summary>
-    public static class SqlDataReaderExtension
+    public static class IDataReaderExtension
     {
         /// <summary>
         /// Gets a nullable value from the <paramref name="reader"/> by column name.
@@ -18,7 +19,7 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <param name="reader">SqlDataReader from query.</param>
         /// <param name="key">Column name.</param>
         /// <returns>Value from column or default if it is null.</returns>
-        public static T? ReadNullableValue<T>(this SqlDataReader reader, string key)
+        public static T? ReadNullableValue<T>(this IDataReader reader, string key)
         {
             int ordinal = reader.GetOrdinal(key);
             return reader.ReadNullableValue<T?>(ordinal);
@@ -31,7 +32,7 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <param name="reader">SqlDataReader from query.</param>
         /// <param name="ordinal">Column number.</param>
         /// <returns>Value from column or default if it is null.</returns>
-        public static T? ReadNullableValue<T>(this SqlDataReader reader, int ordinal)
+        public static T? ReadNullableValue<T>(this IDataReader reader, int ordinal)
         {
             return reader.ReadNullableValue<T?>(ordinal, default);
         }
@@ -44,23 +45,23 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <param name="key">Column name.</param>
         /// <param name="defaultValue">Default value if value is null.</param>
         /// <returns>Value from column or <paramref name="defaultValue"/> if it is null.</returns>
-        public static T ReadNullableValue<T>(this SqlDataReader reader, string key, T defaultValue)
+        public static T? ReadNullableValue<T>(this IDataReader reader, string key, T? defaultValue)
         {
             int ordinal = reader.GetOrdinal(key);
-            return reader.ReadNullableValue<T>(ordinal, defaultValue);
+            return reader.ReadNullableValue(ordinal, defaultValue);
         }
 
         /// <summary>
-        /// Gets a nullable value from the <paramref name="reader"/> by column name.
+        /// Gets a nullable value from the <paramref name="reader"/> by column ordinal.
         /// </summary>
         /// <typeparam name="T">Column type.</typeparam>
         /// <param name="reader">SqlDataReader from query.</param>
         /// <param name="ordinal">Column number.</param>
         /// <param name="defaultValue">Default value if value is null.</param>
         /// <returns>Value from column or <paramref name="defaultValue"/> if it is null.</returns>
-        public static T ReadNullableValue<T>(this SqlDataReader reader, int ordinal, T defaultValue)
+        public static T? ReadNullableValue<T>(this IDataReader reader, int ordinal, T? defaultValue)
         {
-            return reader.IsDBNull(ordinal) ? defaultValue : reader.GetFieldValue<T>(ordinal);
+            return reader.IsDBNull(ordinal) ? defaultValue : (T)reader.GetValue(ordinal);
         }
 
         /// <summary>
@@ -70,22 +71,22 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <param name="reader">SqlDataReader from query.</param>
         /// <param name="key">Column name.</param>
         /// <returns>Value from column.</returns>
-        public static T ReadValue<T>(this SqlDataReader reader, string key)
+        public static T ReadValue<T>(this IDataReader reader, string key)
         {
             int ordinal = reader.GetOrdinal(key);
             return reader.ReadValue<T>(ordinal);
         }
 
         /// <summary>
-        /// Gets a value from the <paramref name="reader"/> by column name.
+        /// Gets a value from the <paramref name="reader"/> by column ordinal.
         /// </summary>
         /// <typeparam name="T">Column type.</typeparam>
         /// <param name="reader">SqlDataReader from query.</param>
         /// <param name="ordinal">Column number.</param>
         /// <returns>Value from column.</returns>
-        public static T ReadValue<T>(this SqlDataReader reader, int ordinal)
+        public static T ReadValue<T>(this IDataReader reader, int ordinal)
         {
-            return reader.GetFieldValue<T>(ordinal);
+            return (T)reader.GetValue(ordinal);
         }
 
         /// <summary>
@@ -93,30 +94,23 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// </summary>
         /// <typeparam name="T">Type returned from the query.</typeparam>
         /// <param name="reader">SqlDataReader from the query.</param>
-        /// <param name="quietFail">If the value should quietly fail instead of throwing an exception</param>
         /// <returns>The type returned from the query.</returns>
-        /// <exception cref="SqlException">If <paramref name="quietFail"/> is false and there is no row to read.</exception>
-        public static T GetSingle<T>(this SqlDataReader reader, bool quietFail) where T : IDatabaseModel<T>
+        public static T GetSingle<T>(this IDataReader reader) where T : IDatabaseModel<T>
         {
-            if (!quietFail && !reader.Read())
-            {
-                throw new SqlException("Failed to read value from SQL.");
-            }
-            
             T output = T.GetFromReader(reader);
 
             return output;
         }
 
         /// <summary>
-        /// Gets multiple values of <typeparamref name="T"/> from <paramref name="reader"/> using <seealso cref="IDatabaseModel{T}.GetFromReader(SqlDataReader)"/>.
+        /// Gets multiple values of <typeparamref name="T"/> from <paramref name="reader"/> using <seealso cref="IDatabaseModel{T}.GetFromReader(IDataReader)"/>.
         /// </summary>
         /// <typeparam name="T">Type returned from the query.</typeparam>
         /// <param name="reader">SqlDataReader from the query.</param>
         /// <returns>List of <typeparamref name="T"/> from the query.</returns>
-        public static List<T> GetMultiple<T>(this SqlDataReader reader) where T : IDatabaseModel<T>
+        public static List<T> GetMultiple<T>(this IDataReader reader) where T : IDatabaseModel<T>
         {
-            List<T> output = new();
+            List<T> output = [];
 
             while (reader.Read())
             {
@@ -135,9 +129,9 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <typeparam name="T">Type returned from the query.</typeparam>
         /// <param name="reader">SqlDataReader from the query.</param>
         /// <returns>List of <typeparamref name="T"/> from the query.</returns>
-        public static List<T> GetMultipleSimple<T>(this SqlDataReader reader) where T : IConvertible
+        public static List<T> GetMultipleSimple<T>(this IDataReader reader) where T : IConvertible
         {
-            List<T> output = new();
+            List<T> output = [];
 
             while (reader.Read())
             {

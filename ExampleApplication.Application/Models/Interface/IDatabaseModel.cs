@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
 
 namespace ExampleApplication.Application.Models.Interface
 {
@@ -9,10 +9,10 @@ namespace ExampleApplication.Application.Models.Interface
     public interface IDatabaseModel<T> where T : IDatabaseModel<T>
     {
         /// <summary>
-        /// Gets an object of type <typeparamref name="T"/> from a <seealso cref="SqlDataReader"/>.
+        /// Gets an object of type <typeparamref name="T"/> from an <seealso cref="IDataReader"/> via SQL query.
         /// </summary>
-        /// <param name="reader">SqlDataReader from query.</param>
+        /// <param name="reader">IDataReader from query.</param>
         /// <returns>Object from query result.</returns>
-        public static abstract T GetFromReader(SqlDataReader reader);
+        public static abstract T GetFromReader(IDataReader reader);
     }
 }
