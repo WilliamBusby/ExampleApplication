@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using ExampleApplication.Application.Helpers.Database;
-using ExampleApplication.Application.Models.Database;
+using ExampleApplication.Database.Helpers;
+using ExampleApplication.Database.Models;
 using System;
 using System.Collections.Generic;
 

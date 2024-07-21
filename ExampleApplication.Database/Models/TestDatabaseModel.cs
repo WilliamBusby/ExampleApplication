@@ -1,8 +1,8 @@
-﻿using ExampleApplication.Application.Helpers.Extension;
-using ExampleApplication.Application.Models.Interface;
+﻿using ExampleApplication.Common.Helpers;
+using ExampleApplication.Common.Models;
 using System.Data;
 
-namespace ExampleApplication.Application.Models.Database
+namespace ExampleApplication.Database.Models
 {
     /// <summary>
     /// Example model for testing.

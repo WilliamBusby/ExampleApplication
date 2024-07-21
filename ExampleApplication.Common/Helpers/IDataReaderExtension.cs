@@ -1,11 +1,10 @@
-﻿using ExampleApplication.Application.Models.Exceptions;
-using ExampleApplication.Application.Models.Interface;
+﻿using ExampleApplication.Common.Models;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace ExampleApplication.Application.Helpers.Extension
+namespace ExampleApplication.Common.Helpers
 {
     /// <summary>
     /// Extension methods for <seealso cref="IDataReader"/>.

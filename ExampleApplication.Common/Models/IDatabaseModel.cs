@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace ExampleApplication.Application.Models.Interface
+namespace ExampleApplication.Common.Models
 {
     /// <summary>
     /// Database model used for querying.

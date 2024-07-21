@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 
-namespace ExampleApplication.Application.Helpers.Extension
+namespace ExampleApplication.Common.Helpers
 {
     /// <summary>
     /// Extension methods for <seealso cref="SqlCommand"/>.
@@ -16,7 +16,7 @@ namespace ExampleApplication.Application.Helpers.Extension
         /// <returns>SqlParameters added to the command.</returns>
         public static List<SqlParameter> AddParameters(this SqlCommand command, IDictionary<string, object?> parameters)
         {
-            List<SqlParameter> output = new();
+            List<SqlParameter> output = [];
 
             foreach (KeyValuePair<string, object?> parameter in parameters)
             {

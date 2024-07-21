@@ -1,7 +1,9 @@
-﻿using ExampleApplication.Application.Models.Database;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ExampleApplication.Common.Helpers;
+using ExampleApplication.Common.Models;
+using ExampleApplication.Database.Models;
 
-namespace ExampleApplication.Application.Helpers.Database
+namespace ExampleApplication.Database.Helpers
 {
     public class TestDatabaseHelper : BaseDatabaseHelper, ITestDatabaseHelper
     {
@@ -16,7 +18,9 @@ namespace ExampleApplication.Application.Helpers.Database
         public TestDatabaseModel GetTestQuery()
         {
             string sql = "SELECT 'Test' [Name], 18 [Age]";
-            return QuerySingle<TestDatabaseModel>(_ConnectionString, sql);
+            SqlQuery query = new(_ConnectionString, sql);
+
+            return QuerySingle<TestDatabaseModel>(query);
         }
 
         public string GetTestQuery2()
